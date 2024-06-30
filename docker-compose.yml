@@ -1,0 +1,31 @@
+version: '3'
+services:
+  srt-listener:
+    container_name: srt-listener
+    build:
+      context: .
+      dockerfile: srt-listener/Dockerfile
+    ports:
+      - "2000:2000/udp"
+    depends_on:
+      - converter
+  converter:
+    container_name: converter
+    build:
+      context: .
+      dockerfile: converter/Dockerfile
+    volumes:
+      - live-data:/output
+  nginx:
+    container_name: nginx
+    build:
+      context: .
+      dockerfile: nginx/Dockerfile
+    volumes:
+      - live-data:/usr/share/nginx/html/live
+    ports:
+      - "8080:80"
+    depends_on: 
+      - converter
+volumes:
+  live-data:
